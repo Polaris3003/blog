@@ -16,13 +16,204 @@ zookeeper
 
 1\. (打卡 1) [37 \[解数独\]](https://leetcode.cn/problems/sudoku-solver/description/) 🤩
 
-![](<../../../.gitbook/assets/image (7).png>)\
+![](<../../../.gitbook/assets/image (7).png>)
+
+玩过但是用代码就。。。 整体思路就是递归+回溯吧\
+然后用了点位运算x&-x优化
+
+贴个题解 希望下次见能自己写出来）
+
+```cpp
+class Solution {
+private:
+    int line[9];
+    int column[9];
+    int block[3][3];
+    bool valid;
+    vector<pair<int, int>> spaces;
+
+public:
+    void flip(int i, int j, int digit) {
+        line[i] ^= (1 << digit);
+        column[j] ^= (1 << digit);
+        block[i / 3][j / 3] ^= (1 << digit);
+    }
+
+    void dfs(vector<vector<char>>& board, int pos) {
+        if (pos == spaces.size()) {
+            valid = true;
+            return;
+        }
+
+        auto [i, j] = spaces[pos];
+        int mask = ~(line[i] | column[j] | block[i / 3][j / 3]) & 0x1ff;
+        for (; mask && !valid; mask &= (mask - 1)) {
+            int digitMask = mask & (-mask);
+            int digit = __builtin_ctz(digitMask);
+            flip(i, j, digit);
+            board[i][j] = digit + '0' + 1;
+            dfs(board, pos + 1);
+            flip(i, j, digit);
+        }
+    }
+
+    void solveSudoku(vector<vector<char>>& board) {
+        memset(line, 0, sizeof(line));
+        memset(column, 0, sizeof(column));
+        memset(block, 0, sizeof(block));
+        valid = false;
+
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (board[i][j] != '.') {
+                    int digit = board[i][j] - '0' - 1;
+                    flip(i, j, digit);
+                }
+            }
+        }
+
+        while (true) {
+            int modified = false;
+            for (int i = 0; i < 9; ++i) {
+                for (int j = 0; j < 9; ++j) {
+                    if (board[i][j] == '.') {
+                        int mask = ~(line[i] | column[j] | block[i / 3][j / 3]) & 0x1ff;
+                        if (!(mask & (mask - 1))) {
+                            int digit = __builtin_ctz(mask);
+                            flip(i, j, digit);
+                            board[i][j] = digit + '0' + 1;
+                            modified = true;
+                        }
+                    }
+                }
+            }
+            if (!modified) {
+                break;
+            }
+        }
+
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (board[i][j] == '.') {
+                    spaces.emplace_back(i, j);
+                }
+            }
+        }
+
+        dfs(board, 0);
+    }
+};
+```
+
+\
 2\. (打卡 2) [745 \[前缀和后缀搜索\] ](https://leetcode.cn/problems/prefix-and-suffix-search/description/)🤩
 
-![](<../../../.gitbook/assets/image (9).png>)\
+![](<../../../.gitbook/assets/image (9).png>)
+
+难点就是trie树 然后用两颗树 一个存前缀一个存后缀
+
+
+
+````cpp
+```cpp
+class WordFilter {
+public:
+    struct TrieNode{
+        TrieNode* tns[26] {nullptr};
+        vector<int> idxs;
+    };
+    void add(TrieNode* p,const string& s,int idx,bool isTurn){
+        int n = s.size();
+        p->idxs.push_back(idx);
+        for(int i = isTurn ? n-1 :0;i>=0&&i<n;i+=isTurn?-1:1){
+            int u=s[i]-'a';
+            if(p->tns[u] == nullptr) p->tns[u]=new TrieNode();
+            p = p->tns[u];
+            p->idxs.push_back(idx);
+        }
+    }
+    int query(const string& a,const string& b){
+        int n = a.size(),m=b.size();
+        auto p=tr1;
+        for(int i=0;i<n;i++){
+            int u=a[i]-'a';
+            if(p->tns[u]==nullptr)return -1;
+            p=p->tns[u];
+        }
+        vector<int>& l1 = p->idxs;
+        p=tr2;
+        for(int i = m - 1; i >= 0; i--) {
+            int u = b[i] - 'a';
+            if(p->tns[u] == nullptr) return -1;
+            p = p->tns[u];
+        }
+        vector<int>& l2 = p->idxs;
+        n = l1.size(), m = l2.size();
+        for(int i = n - 1, j = m - 1; i >= 0 && j >= 0; ) {
+            if(l1[i] > l2[j]) i--;
+            else if(l1[i] < l2[j]) j--;
+            else return l1[i];
+        }
+        return -1;
+    }
+    TrieNode* tr1 = new TrieNode, *tr2 = new TrieNode;
+    WordFilter(vector<string>& ss) {
+        int n = ss.size();
+        for(int i = 0; i < n; i++) {
+            add(tr1, ss[i], i, false);
+            add(tr2, ss[i], i, true);
+        }
+    }
+    
+    int f(string a, string b) {
+        return query(a, b);
+    }
+};
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter* obj = new WordFilter(words);
+ * int param_1 = obj->f(pref,suff);
+ */
+```
+````
+
+\
 3\. (每日) [2760 \[最长奇偶子数组\]](https://leetcode.cn/problems/longest-even-odd-subarray-with-threshold/description/?envType=daily-question\&envId=2023-11-16) ![](../../../.gitbook/assets/FK0\(U]GU\[5%XVGX3MX$@7BR.png)
 
 ![](<../../../.gitbook/assets/image (8).png>)
+
+第一反应是暴力。。sry dp应该是最优解
+
+$$Dp(i) = \begin{cases} 0, & nums[l]>threshold \\ dp[i+1]+1, & nums[l]<=threhold  && (nums[i]mod2!=nums[i+1]mod2） \\ 1,& otherwise \\ \end{cases}$$
+
+latex好难写。。。
+
+{% code fullWidth="true" %}
+````cpp
+```cpp
+class Solution {
+public:
+    int longestAlternatingSubarray(vector<int>& nums, int threshold) {
+        int ans=0,dp=0,n=nums.size();
+        for(int l=n-1;l>=0;l--){
+            if(nums[l] > threshold){
+                dp = 0;
+            }else if(l==n-1||nums[l]%2!=nums[l+1]%2){
+                dp++;
+            }else{
+                dp=1;
+            }
+            if(nums[l]%2==0){
+                ans=max(ans,dp);
+            }
+        }
+        return ans;
+    }
+};
+```
+````
+{% endcode %}
 
 </details>
 
