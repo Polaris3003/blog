@@ -2,7 +2,7 @@
 
 Today's stuff
 
-<table data-header-hidden><thead><tr><th width="80" data-type="checkbox"></th><th width="120" data-type="select" data-multiple>Type</th><th>Action</th></tr></thead><tbody><tr><td>true</td><td></td><td>leetcode</td></tr><tr><td>false</td><td></td><td>6.824 zookeeper</td></tr><tr><td>false</td><td></td><td>0x3f tea</td></tr><tr><td>false</td><td></td><td>algorithm</td></tr><tr><td>false</td><td></td><td>日本語のstudy</td></tr><tr><td>false</td><td></td><td>xiaolin coding</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="80" data-type="checkbox"></th><th width="120" data-type="select" data-multiple>Type</th><th>Action</th></tr></thead><tbody><tr><td>true</td><td></td><td>leetcode</td></tr><tr><td>true</td><td></td><td>6.824 zookeeper</td></tr><tr><td>true</td><td></td><td>0x3f tea</td></tr><tr><td>true</td><td></td><td>algorithm</td></tr><tr><td>false</td><td></td><td>日本語のstudy</td></tr><tr><td>false</td><td></td><td>xiaolin coding</td></tr></tbody></table>
 
 ## Notes & ideas
 
@@ -12,7 +12,7 @@ Today's stuff
 
 1\. (打卡 1) [407 \[接雨水 II\]](https://leetcode.cn/problems/trapping-rain-water-ii/description/) 🤩
 
-😢希望这次能真的搞懂接雨水
+😢希望这次能真的搞懂接雨水（暂时还不知道怎么放大图片）
 
 <mark style="color:blue;">**题目描述：**</mark>
 
@@ -116,116 +116,7 @@ public:
 
 </details>
 
-<details>
-
-<summary>tea</summary>
-
-[https://codeforces.com/problemset/problem/1861/C](https://codeforces.com/problemset/problem/1861/C)
-
-输入 T(≤1e4) 表示 T 组数据。所有数据的字符串长度之和 ≤2e5。 每组数据长度 ≤2e5 的字符串 s，只包含 + - 1 0 四种字符。
-
-一开始你有一个空栈 t。 从左到右遍历 s： 遇到 +，入栈一个元素，大小未知。 遇到 -，弹出栈顶元素，输入保证此时栈非空。 遇到 1，说明此时从栈底到栈顶，一定是递增的，即一定满足 t\[0] <= t\[1] <= ... 遇到 0，说明此时从栈底到栈顶，一定不是递增的，即一定不满足 t\[0] <= t\[1] <= ... 如果 1 和 0 的描述一定矛盾，输出 NO，否则输出 YES。 注：大小不足 2 的栈是递增的。
-
-input
-
-```
-7
-++1
-+++1--0
-+0
-0
-++0-+1-+0
-++0+-1+-0
-+1-+0
-```
-
-output
-
-<pre><code><strong>YES
-</strong>NO
-NO
-NO
-YES
-NO
-</code></pre>
-
-<mark style="color:red;">**难度：1600**</mark>
-
-提示 1 对于 ...0++0++0，后面两个 0 都是无效信息，因为第一个 0 已经告诉我们栈是无序的了，所以只需要知道【最短】的无序长度，记作 unsortedSize。（初始值为 inf） 特别地，如果当前栈长度缩短至 < unsortedSize，那么 unsortedSize 信息作废，更新为 inf。 遇到 1 时，如果当前栈长度 >= unsortedSize，说明栈包含了一段无序元素，矛盾，直接输出 NO。
-
-提示 2 对于 ...1..1..1，无论中间的 .. 是 + 还是 -，前面两个 1 都是无效信息，我们只需要知道【最新】的有序长度，记作 sortedSize。 特别地，如果当前栈长度缩短至 < sortedSize，那么更新 sortedSize 为当前栈长度。 遇到 0 时，如果当前栈长度 <= sortedSize（或者当前栈长度不足 2），说明整个栈其实是有序的，矛盾，直接输出 NO。
-
-[https://codeforces.com/problemset/submission/1861/231953477](https://codeforces.com/problemset/submission/1861/231953477)
-
-<mark style="color:purple;">解：</mark>
-
-```go
-package main
-
-import (
-	"bufio"
-	. "fmt"
-	"io"
-	"math"
-	"os"
-)
-
-func CF1861C(_r io.Reader, _w io.Writer) {
-	in := bufio.NewReader(_r)
-	out := bufio.NewWriter(_w)
-	defer out.Flush()
-
-	T, s := 0, ""
-o:
-	for Fscan(in, &T); T > 0; T-- {
-		Fscan(in, &s)
-		curSize := 0
-		sortedSize := 1
-		unsortedSize := math.MaxInt
-		for _, b := range s {
-			if b == '+' {
-				curSize++
-			} else if b == '-' {
-				curSize--
-				if curSize < unsortedSize {
-					unsortedSize = math.MaxInt // 后面 s[i]='1' 是可以的
-				}
-				if curSize < sortedSize {
-					sortedSize = max(curSize, 1)
-				}
-			} else if b == '0' {
-				if curSize <= sortedSize {
-					Fprintln(out, "NO")
-					continue o
-				}
-				unsortedSize = min(unsortedSize, curSize)
-			} else {
-				if curSize >= unsortedSize {
-					Fprintln(out, "NO")
-					continue o
-				}
-				sortedSize = max(curSize, 1)
-			}
-		}
-		Fprintln(out, "YES")
-	}
-}
-func main() { CF1861C(os.Stdin, os.Stdout) }
-func min(a, b int) int {
-	if b < a {
-		return b
-	}
-	return a
-}
-func max(a, b int) int {
-	if b > a {
-		return b
-	}
-	return a
-}
-```
-
-</details>
+{% embed url="https://www.youtube.com/watch?feature=youtu.be&v=HYTDDLo2vSE" %}
 
 <details>
 
@@ -233,7 +124,7 @@ func max(a, b int) int {
 
 今天看了点线性一致方面的东西 然后重要的就是zookeeper是将所有的写请求通过leader下发，将读请求发送给某一个副本 因为现实世界中 大量的负载是读请求 增加了zookeeper现实的可用性
 
-\
+待会再看看video 放个链接上来先）\
 **question:**
 
 如果我们直接将客户端的请求发送给副本，我们能得到预期的结果吗？因为可能有很多原因会导致副本的数据不是up to date的 所以可能会读到一个旧的数据
@@ -244,7 +135,7 @@ func max(a, b int) int {
 
 然而，我们必须考虑这个问题，如果系统不提供线性一致性，那么系统是否还可用？客户端发送了一个读请求，但是并没有得到当前的正确数据，也就是最新的数据，那我们为什么要相信这个系统是可用的？我们接下来看一下这个问题。
 
-在这之前，还有问题吗？Zookeeper的确允许客户端将读请求发送给任意副本，并由副本根据自己的状态来响应读请求。副本的Log可能并没有拥有最新的条目，所以尽管系统中可能有一些更新的数据，这个副本可能还是会返回旧的数据。这就来到了一致性保证的问题
+在这之前，还有问题吗？Zookeeper的确允许客户端将读请求发送给任意副本，并由副本根据自己的状态来响应读请求。副本的Log可能并没有拥有最新的条目，所以尽管系统中可能有一些更新的数据，这个副本可能还是会返回旧的数据。这就来到了一致性保证的问题（现在去看 理解一下）
 
 </details>
 
