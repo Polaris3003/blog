@@ -322,9 +322,9 @@ func main() { Cf721C(os.Stdin, os.Stdout) }
 
 <details>
 
-<summary><a href="https://pdos.csail.mit.edu/6.824/papers/zookeeper.pdf">6.824 zookeeper</a></summary>
+<summary><a href="https://pdos.csail.mit.edu/6.824/papers/cr-osdi04.pdf">6.824 chain replication</a></summary>
 
-
+呃 明明是cr 今天却看了个craq Apportioned Queries 就是更牛逼一点？还不知道怎么实现的 再看看
 
 </details>
 
@@ -444,7 +444,7 @@ IP 包头组装成 IP 报文，如果 IP 报文大小超过 MTU（以太网中�
 
 <summary>🧠 Mood tracking</summary>
 
-Not so bad?😢Trying to find some new songs for relax
+昏头了哥们 2185出列 不知道在干嘛 多睡觉！
 
 </details>
 
@@ -460,4 +460,4 @@ Brain is a little rusty.... and too lazy
 **GitBook tip:** Use the **rating** column in a table to build a super simple habit-tracking section.
 {% endhint %}
 
-<table data-header-hidden><thead><tr><th width="120" data-type="rating" data-max="5"></th><th>Task</th></tr></thead><tbody><tr><td>3</td><td>Sleep</td></tr><tr><td>3</td><td>Work/life balance</td></tr><tr><td>3</td><td>Creativity</td></tr><tr><td>3</td><td>Fitness</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="120" data-type="rating" data-max="5"></th><th>Task</th></tr></thead><tbody><tr><td>2</td><td>Sleep</td></tr><tr><td>3</td><td>Work/life balance</td></tr><tr><td>3</td><td>Creativity</td></tr><tr><td>3</td><td>Fitness</td></tr></tbody></table>
