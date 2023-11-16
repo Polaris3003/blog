@@ -2,7 +2,7 @@
 
 Today's stuff
 
-<table data-header-hidden><thead><tr><th width="80" data-type="checkbox"></th><th width="120" data-type="select" data-multiple>Type</th><th>Action</th></tr></thead><tbody><tr><td>false</td><td></td><td>leetcode</td></tr><tr><td>false</td><td></td><td>6.824 zookeeper</td></tr><tr><td>false</td><td></td><td>0x3f tea</td></tr><tr><td>false</td><td></td><td>algorithm</td></tr><tr><td>false</td><td></td><td>日本語のstudy</td></tr><tr><td>false</td><td></td><td>xiaolin coding</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="80" data-type="checkbox"></th><th width="120" data-type="select" data-multiple>Type</th><th>Action</th></tr></thead><tbody><tr><td>true</td><td></td><td>leetcode</td></tr><tr><td>false</td><td></td><td>6.824 zookeeper</td></tr><tr><td>true</td><td></td><td>0x3f tea</td></tr><tr><td>true</td><td></td><td>algorithm</td></tr><tr><td>false</td><td></td><td>日本語のstudy</td></tr><tr><td>false</td><td></td><td>xiaolin coding</td></tr></tbody></table>
 
 ## Notes & ideas
 
@@ -23,6 +23,7 @@ zookeeper
 
 贴个题解 希望下次见能自己写出来）
 
+{% code lineNumbers="true" %}
 ```cpp
 class Solution {
 private:
@@ -104,6 +105,7 @@ public:
     }
 };
 ```
+{% endcode %}
 
 \
 2\. (打卡 2) [745 \[前缀和后缀搜索\] ](https://leetcode.cn/problems/prefix-and-suffix-search/description/)🤩
@@ -114,6 +116,7 @@ public:
 
 
 
+{% code lineNumbers="true" %}
 ````cpp
 ```cpp
 class WordFilter {
@@ -177,6 +180,7 @@ public:
  */
 ```
 ````
+{% endcode %}
 
 \
 3\. (每日) [2760 \[最长奇偶子数组\]](https://leetcode.cn/problems/longest-even-odd-subarray-with-threshold/description/?envType=daily-question\&envId=2023-11-16) ![](../../../.gitbook/assets/FK0\(U]GU\[5%XVGX3MX$@7BR.png)
@@ -189,7 +193,7 @@ $$Dp(i) = \begin{cases} 0, & nums[l]>threshold \\ dp[i+1]+1, & nums[l]<=threhold
 
 latex好难写。。。
 
-{% code fullWidth="true" %}
+{% code lineNumbers="true" fullWidth="true" %}
 ````cpp
 ```cpp
 class Solution {
@@ -219,47 +223,42 @@ public:
 
 <details>
 
-<summary>tea</summary>
-
-[https://codeforces.com/problemset/problem/1861/C](https://codeforces.com/problemset/problem/1861/C)
-
-输入 T(≤1e4) 表示 T 组数据。所有数据的字符串长度之和 ≤2e5。 每组数据长度 ≤2e5 的字符串 s，只包含 + - 1 0 四种字符。
-
-一开始你有一个空栈 t。 从左到右遍历 s： 遇到 +，入栈一个元素，大小未知。 遇到 -，弹出栈顶元素，输入保证此时栈非空。 遇到 1，说明此时从栈底到栈顶，一定是递增的，即一定满足 t\[0] <= t\[1] <= ... 遇到 0，说明此时从栈底到栈顶，一定不是递增的，即一定不满足 t\[0] <= t\[1] <= ... 如果 1 和 0 的描述一定矛盾，输出 NO，否则输出 YES。 注：大小不足 2 的栈是递增的。
-
-input
+<summary><a href="https://codeforces.com/contest/721/problem/C">tea</a></summary>
 
 ```
-7
-++1
-+++1--0
-+0
-0
-++0-+1-+0
-++0+-1+-0
-+1-+0
+https://codeforces.com/contest/721/problem/C
+
+输入 n(2≤n≤5000) m(1≤m≤5000) maxT(1≤maxT≤1e9)。
+然后输入 m 条边，每条边输入 v w t(1≤wt≤1e9)，表示有一条边权为 t 的有向边连接 v 和 w。节点编号从 1 开始。
+保证输入的是一个有向无环图，并且没有重边。
+
+求出从 1 到 n 的一条路径，要求路径长度（边权之和）不超过 maxT，在满足该条件的前提下，路径上的节点数最多。
+输出两行，第一行是路径上的节点个数，第二行按顺序输出路径上的节点编号（第一个数必须是 1，最后一个数必须是 n）。
+保证至少有一条满足要求的路径。
 ```
 
-output
+example:
 
-<pre><code><strong>YES
-</strong>NO
-NO
-NO
-YES
-NO
-</code></pre>
+![](<../../../.gitbook/assets/image (10).png>)
 
-<mark style="color:red;">**难度：1600**</mark>
+```markdown
+提示 1：把「经过了多少个点」作为额外的 DP 维度，把「最短长度」作为 DP 值。
 
-提示 1 对于 ...0++0++0，后面两个 0 都是无效信息，因为第一个 0 已经告诉我们栈是无序的了，所以只需要知道【最短】的无序长度，记作 unsortedSize。（初始值为 inf） 特别地，如果当前栈长度缩短至 < unsortedSize，那么 unsortedSize 信息作废，更新为 inf。 遇到 1 时，如果当前栈长度 >= unsortedSize，说明栈包含了一段无序元素，矛盾，直接输出 NO。
+提示 2：定义 f[i][w] 表示从 1 到 w，经过了 i+1 个点的最短长度。i 最大为 n-1。
+初始值：f[0][1] = 0，其余为无穷大。
+状态转移方程：f[i][w] = min(f[i-1][v]+t)，其中有向边 v->w 的边权为 t。
+答案：最大的满足 f[i][n] <= maxT 的 i，再加一（注意 i 是从 0 开始的）。
 
-提示 2 对于 ...1..1..1，无论中间的 .. 是 + 还是 -，前面两个 1 都是无效信息，我们只需要知道【最新】的有序长度，记作 sortedSize。 特别地，如果当前栈长度缩短至 < sortedSize，那么更新 sortedSize 为当前栈长度。 遇到 0 时，如果当前栈长度 <= sortedSize（或者当前栈长度不足 2），说明整个栈其实是有序的，矛盾，直接输出 NO。
+提示 3：从转移方程可以看出，其实不需要建图，只需要循环 n-1 次，每次遍历这 m 条边，在遍历时计算状态转移。
+这是因为 f[i][] 只依赖于 f[i-1][]，在把 f[i-1][] 算出来后，无论按照什么顺序遍历这 m 条边都是可以的。
 
-[https://codeforces.com/problemset/submission/1861/231953477](https://codeforces.com/problemset/submission/1861/231953477)
+提示 4：计算状态转移的时候，额外记录转移来源 from[i][w] = v。
+从 n 出发，顺着 from 数组回到 1，就得到了具体方案。
+```
 
-<mark style="color:purple;">解：</mark>
+😢我恨dp&#x20;
 
+{% code lineNumbers="true" %}
 ```go
 package main
 
@@ -267,64 +266,57 @@ import (
 	"bufio"
 	. "fmt"
 	"io"
-	"math"
 	"os"
 )
 
-func CF1861C(_r io.Reader, _w io.Writer) {
+func Cf721C(_r io.Reader, _w io.Writer) {
 	in := bufio.NewReader(_r)
 	out := bufio.NewWriter(_w)
 	defer out.Flush()
 
-	T, s := 0, ""
-o:
-	for Fscan(in, &T); T > 0; T-- {
-		Fscan(in, &s)
-		curSize := 0
-		sortedSize := 1
-		unsortedSize := math.MaxInt
-		for _, b := range s {
-			if b == '+' {
-				curSize++
-			} else if b == '-' {
-				curSize--
-				if curSize < unsortedSize {
-					unsortedSize = math.MaxInt // 后面 s[i]='1' 是可以的
-				}
-				if curSize < sortedSize {
-					sortedSize = max(curSize, 1)
-				}
-			} else if b == '0' {
-				if curSize <= sortedSize {
-					Fprintln(out, "NO")
-					continue o
-				}
-				unsortedSize = min(unsortedSize, curSize)
-			} else {
-				if curSize >= unsortedSize {
-					Fprintln(out, "NO")
-					continue o
-				}
-				sortedSize = max(curSize, 1)
+	var n, m int
+	var maxT int32
+	Fscan(in, &n, &m, &maxT)
+	es := make([][3]int32, m)
+	for i := range es {
+		Fscan(in, &es[i][0], &es[i][1], &es[i][2])
+	}
+	const mx = 5001
+	f := make([][mx]int32, n)
+	for i := range f {
+		for j := 1; j <= n; j++ {
+			f[i][j] = maxT + 1
+		}
+	}
+	f[0][1] = 0
+	from := make([][mx]int16, n+1)
+	ans := 0
+	for i := 1; i < n; i++ {
+		for _, e := range es {
+			v, w, t := e[0], e[1], e[2]
+			sumT := f[i-1][v] + t
+			if sumT < f[i][w] {
+				f[i][w] = sumT
+				from[i][w] = int16(v)
 			}
 		}
-		Fprintln(out, "YES")
+		if f[i][n] <= maxT {
+			ans = i
+		}
 	}
-}
-func main() { CF1861C(os.Stdin, os.Stdout) }
-func min(a, b int) int {
-	if b < a {
-		return b
+
+	Fprintln(out, ans+1)
+	path := make([]any, ans+1)
+	v := int16(n)
+	for i := ans; i >= 0; i-- {
+		path[i] = v
+		v = from[i][v]
 	}
-	return a
+	Fprint(out, path...)
 }
-func max(a, b int) int {
-	if b > a {
-		return b
-	}
-	return a
-}
+func main() { Cf721C(os.Stdin, os.Stdout) }
 ```
+{% endcode %}
 
 </details>
 
@@ -338,15 +330,55 @@ func max(a, b int) int {
 
 <details>
 
-<summary>algorithm</summary>
+<summary><a href="https://oi-wiki.org/string/trie/">algorithm</a></summary>
+
+今日算法 trie树
+
+也就是字典树 这棵字典树用边来代表字母，而从根结点到树上某一结点的路径就代表了一个字符串。举个例子，1->4->8->13表示的就是字符串 `caa`。
+
+有时需要标记插入进 trie 的是哪些字符串，每次插入完成时在这个字符串所代表的节点处打上标记即可。
+
+<img src="../../../.gitbook/assets/image (11).png" alt="" data-size="original">
 
 
+
+{% code lineNumbers="true" %}
+```cpp
+//模板
+struct trie {
+  int nex[100000][26], cnt;
+  bool exist[100000];  // 该结点结尾的字符串是否存在
+
+  void insert(char *s, int l) {  // 插入字符串
+    int p = 0;
+    for (int i = 0; i < l; i++) {
+      int c = s[i] - 'a';
+      if (!nex[p][c]) nex[p][c] = ++cnt;  // 如果没有，就添加结点
+      p = nex[p][c];
+    }
+    exist[p] = 1;
+  }
+
+  bool find(char *s, int l) {  // 查找字符串
+    int p = 0;
+    for (int i = 0; i < l; i++) {
+      int c = s[i] - 'a';
+      if (!nex[p][c]) return 0;
+      p = nex[p][c];
+    }
+    return exist[p];
+  }
+};
+```
+{% endcode %}
+
+应用太多了。。。最常见的就是检查一个字符串有没有出现过 其他的高级用法估计不太用的上 以后再补叭
 
 </details>
 
 <details>
 
-<summary>xiaolin coding</summary>
+<summary><a href="https://xiaolincoding.com/">xiaolin coding</a></summary>
 
 呃 其实看过一遍了 但是忘得有点快 就从新开始再过一遍
 
