@@ -2,7 +2,7 @@
 
 Today's stuff
 
-<table data-header-hidden><thead><tr><th width="80" data-type="checkbox"></th><th width="120" data-type="select" data-multiple>Type</th><th>Action</th></tr></thead><tbody><tr><td>true</td><td></td><td>leetcode</td></tr><tr><td>false</td><td></td><td>6.824 zookeeper</td></tr><tr><td>true</td><td></td><td>0x3f tea</td></tr><tr><td>true</td><td></td><td>algorithm</td></tr><tr><td>false</td><td></td><td>日本語のstudy</td></tr><tr><td>false</td><td></td><td>xiaolin coding</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="80" data-type="checkbox"></th><th width="120" data-type="select" data-multiple>Type</th><th>Action</th></tr></thead><tbody><tr><td>true</td><td></td><td>leetcode</td></tr><tr><td>true</td><td></td><td>6.824 CR&#x26;CRAQ</td></tr><tr><td>true</td><td></td><td>0x3f tea</td></tr><tr><td>true</td><td></td><td>algorithm</td></tr><tr><td>false</td><td></td><td>日本語のstudy</td></tr><tr><td>true</td><td></td><td>xiaolin coding</td></tr></tbody></table>
 
 ## Notes & ideas
 
