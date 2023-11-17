@@ -16,52 +16,244 @@ zookeeper
 
 1\. (打卡)[ 1032 \[字符流\]](https://leetcode.cn/problems/stream-of-characters/description/) 🤩
 
-![](<../../../.gitbook/assets/image (13).png>)\
+![](<../../../.gitbook/assets/image (13).png>)
+
+根据words构建前缀树，包含两个属性
+
+children指向子节点 isend是否为字符串结尾
+
+insert和query就是很经典的trie函数了
+
+{% code lineNumbers="true" %}
+```cpp
+class Trie {
+public:
+    vector<Trie*> children;
+    bool isEnd;
+
+    Trie()
+        : children(26)
+        , isEnd(false) {}
+
+    void insert(string& w) {
+        Trie* node = this;
+        reverse(w.begin(), w.end());
+        for (char& c : w) {
+            int idx = c - 'a';
+            if (!node->children[idx]) {
+                node->children[idx] = new Trie();
+            }
+            node = node->children[idx];
+        }
+        node->isEnd = true;
+    }
+
+    bool search(string& w) {
+        Trie* node = this;
+        for (int i = w.size() - 1, j = 0; ~i && j < 201; --i, ++j) {
+            int idx = w[i] - 'a';
+            if (!node->children[idx]) {
+                return false;
+            }
+            node = node->children[idx];
+            if (node->isEnd) {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+class StreamChecker {
+public:
+    Trie* trie = new Trie();
+    string s;
+
+    StreamChecker(vector<string>& words) {
+        for (auto& w : words) {
+            trie->insert(w);
+        }
+    }
+
+    bool query(char letter) {
+        s += letter;
+        return trie->search(s);
+    }
+};
+
+/**
+ * Your StreamChecker object will be instantiated and called as such:
+ * StreamChecker* obj = new StreamChecker(words);
+ * bool param_1 = obj->query(letter);
+ */
+```
+{% endcode %}
+
+\
 2\. (复习) [187 \[重复的DNA序列\]](https://leetcode.cn/problems/repeated-dna-sequences/description/) ![](../../../.gitbook/assets/I]7C7Y\_0S\)OQK0RBF$]V03L.png)
 
-![](<../../../.gitbook/assets/image (14).png>)\
+![](<../../../.gitbook/assets/image (14).png>)
+
+不多说 就用个哈希表存一下就好了 中等题也参差不齐。
+
+{% code lineNumbers="true" %}
+```cpp
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        unordered_map<string, int> cnt;
+        vector<string> ans;
+        for(int i=0;i<s.length();i++){
+            string sub = s.substr(i,10);
+            if(++cnt[sub]==2)
+                ans.push_back(sub);
+        }        
+        return ans;
+    }
+};
+```
+{% endcode %}
+
+\
 3\. (每日) [2736 \[最大和查询\]](https://leetcode.cn/problems/maximum-sum-queries/description/?envType=daily-question\&envId=2023-11-17) 🤩
 
 ![](<../../../.gitbook/assets/image (15).png>)
+
+有点昏 看题解也懵逼 抄个题解先
+
+```cpp
+class Solution {
+public:
+    vector<int> maximumSumQueries(vector<int>& nums1, vector<int>& nums2, vector<vector<int>>& queries) {
+        vector<pair<int, int>> sortedNums;
+        vector<tuple<int, int, int>> sortedQueries;
+        for (int i = 0; i < nums1.size(); i++) {
+            sortedNums.emplace_back(nums1[i], nums2[i]);
+        }
+        sort(sortedNums.begin(), sortedNums.end(), greater<pair<int, int>>());
+        for (int i = 0; i < queries.size(); i++) {
+            sortedQueries.emplace_back(i, queries[i][0], queries[i][1]);
+        }
+        sort(sortedQueries.begin(), sortedQueries.end(), [](tuple<int, int, int> &a, tuple<int, int, int> &b) {
+            return get<1>(a) > get<1>(b);
+        });
+
+        vector<pair<int, int>> stk;
+        vector<int> answer(queries.size(), -1);
+        int j = 0;
+        for (auto &[i, x, y] : sortedQueries) {
+            while (j < sortedNums.size() && sortedNums[j].first >= x) {
+                auto [num1, num2] = sortedNums[j];
+                while (!stk.empty() && stk.back().second <= num1 + num2) {
+                    stk.pop_back();
+                }
+                if (stk.empty() || stk.back().first < num2) {
+                    stk.emplace_back(num2, num1 + num2);
+                }
+                j++;
+            }
+            int k = lower_bound(stk.begin(), stk.end(), make_pair(y, 0)) - stk.begin();
+            if (k < stk.size()) {
+                answer[i] = stk[k].second;
+            }
+        }            
+        return answer;
+    }
+};
+```
 
 </details>
 
 <details>
 
-<summary>tea</summary>
+<summary><a href="https://codeforces.com/problemset/problem/1665/E">tea</a></summary>
 
 ```
-https://codeforces.com/contest/721/problem/C
+https://codeforces.com/problemset/problem/1665/E
 
-输入 n(2≤n≤5000) m(1≤m≤5000) maxT(1≤maxT≤1e9)。
-然后输入 m 条边，每条边输入 v w t(1≤wt≤1e9)，表示有一条边权为 t 的有向边连接 v 和 w。节点编号从 1 开始。
-保证输入的是一个有向无环图，并且没有重边。
-
-求出从 1 到 n 的一条路径，要求路径长度（边权之和）不超过 maxT，在满足该条件的前提下，路径上的节点数最多。
-输出两行，第一行是路径上的节点个数，第二行按顺序输出路径上的节点编号（第一个数必须是 1，最后一个数必须是 n）。
-保证至少有一条满足要求的路径。
+输入 T(≤1e4) 表示 T 组数据。所有数据的 n 之和 ≤1e5，q 之和 ≤1e5。
+每组数据输入 n(1≤n≤1e5) 和长为 n 的数组 a(0≤a[i]<2^30)。数组下标从 1 开始。
+然后输入 q(1≤q≤1e5) 和 q 个询问，每个询问输入两个数 L 和 R，表示下标从 L 到 R 的连续子数组 (1≤L<R≤n)。
+对于每个询问，输出子数组内两个下标不同的数的 OR 的最小值。
 ```
 
 example:
 
-![](<../../../.gitbook/assets/image (10).png>)
+![](<../../../.gitbook/assets/image (16).png>)
 
 ```markdown
-提示 1：把「经过了多少个点」作为额外的 DP 维度，把「最短长度」作为 DP 值。
+从特殊到一般。
 
-提示 2：定义 f[i][w] 表示从 1 到 w，经过了 i+1 个点的最短长度。i 最大为 n-1。
-初始值：f[0][1] = 0，其余为无穷大。
-状态转移方程：f[i][w] = min(f[i-1][v]+t)，其中有向边 v->w 的边权为 t。
-答案：最大的满足 f[i][n] <= maxT 的 i，再加一（注意 i 是从 0 开始的）。
+一
+如果 
+a 中只有 0 和 1，我们只需要知道区间内是否有两个0。
 
-提示 3：从转移方程可以看出，其实不需要建图，只需要循环 n-1 次，每次遍历这 m 条边，在遍历时计算状态转移。
-这是因为 f[i][] 只依赖于 f[i-1][]，在把 f[i-1][] 算出来后，无论按照什么顺序遍历这 m 条边都是可以的。
+如果有两个 0，那么最小 OR 是0，否则是1。
 
-提示 4：计算状态转移的时候，额外记录转移来源 from[i][w] = v。
-从 n 出发，顺着 from 数组回到 1，就得到了具体方案。
+相当于只需要知道最小的两个数是多少，就能确定 OR 最小是多少。
+
+二
+如果 a 中只有 0,1,2,3，在最坏情况下，最少需要知道几个数呢？
+
+考虑下面这三个二进制数，其中? 表示 0 或者 1。
+
+0?
+1?
+1?
+​
+ 
+如果只选择 
+0? 和 1?，这在 00 和 10的情况下是没问题的，但当它们分别是
+
+
+01
+10
+10
+​
+ 
+只选择 
+01 和 10 会算出 OR 为 11，但是选择 10 和 10 会算出 OR 为 10。
+
+猜想：在 a 中只有 0,1,2,3 的情况下，至少要知道最小的 3 个数，才能保证一定可以得到 OR 的最小值。
+
+证明：分类讨论。
+
+如果有两个 0?，那么 OR 的最高位肯定是 0，问题变成一个比特，也就是 a 中只有 0 和 1 的情况。我们已经知道，这只需要知道最小的2 个数。
+如果没有 0? 只有 1?，那么 OR 的最高位肯定是 1，所以同上，变成一个比特的问题，也只需要知道最小的 2 个数。
+如果恰好有一个 0?，其余的是1?，继续分类讨论：
+如果 0? 和 1? 的 OR 最小，那么 1? 这边只需要选最小的数。
+如果 1? 和 1? 的 OR 最小，问题变成上面讨论的第 2 点，需要知道1? 中最小的 2 个数。
+所以知道最小的 3 个数就行，OR 的最小值一定是这 3 个数中的 2 个数的 OR。
+三
+如果 
+a[i] 的范围是 [0,7]，至少要知道最小的几个数，才能保证一定可以得到 OR 的最小值？
+
+至少要知道最小的 4 个数，证明方式同上。
+
+按照如下方式构造，可以使 OR 的最小值一定来自第三小和第四小的数的 OR。
+
+011
+101
+110
+110
+​
+ 
+如果 a[i] 的范围是 [0,15]，构造方法如下：
+
+0111
+1011
+1101
+1110
+1110
+​
+ 
+四
+总的来说，通过数学归纳法可以证明，OR 的最小值一定是最小的 31 个数中选 2 个数的 OR。
+
+所以用线段树维护区间内最小的 31 个数，问题就变成 C(31,2) 的暴力枚举了。
 ```
 
-😢我恨dp&#x20;
+😢周五的茶实在喝不动 先抄为敬
 
 {% code lineNumbers="true" %}
 ```go
@@ -70,56 +262,95 @@ package main
 import (
 	"bufio"
 	. "fmt"
-	"io"
 	"os"
 )
 
-func Cf721C(_r io.Reader, _w io.Writer) {
-	in := bufio.NewReader(_r)
-	out := bufio.NewWriter(_w)
+func min(a, b int) int {
+	if b < a {
+		return b
+	}
+	return a
+}
+
+type seg [][]int
+
+// 合并两个有序数组，保留前 k 个数
+func merge(a, b []int) []int {
+	const k = 31
+	i, n := 0, len(a)
+	j, m := 0, len(b)
+	res := make([]int, 0, min(n+m, k))
+	for len(res) < k {
+		if i == n {
+			res = append(res, b[j:min(j+k-len(res), m)]...)
+			break
+		}
+		if j == m {
+			res = append(res, a[i:min(i+k-len(res), n)]...)
+			break
+		}
+		if a[i] < b[j] {
+			res = append(res, a[i])
+			i++
+		} else {
+			res = append(res, b[j])
+			j++
+		}
+	}
+	return res
+}
+func (t seg) build(a []int, o, l, r int) {
+	if l == r {
+		t[o] = a[l-1 : l]
+		return
+	}
+	m := (l + r) >> 1
+	t.build(a, o<<1, l, m)
+	t.build(a, o<<1|1, m+1, r)
+	t[o] = merge(t[o<<1], t[o<<1|1])
+}
+
+func (t seg) query(o, l, r, L, R int) []int {
+	if L <= l && r <= R {
+		return t[o]
+	}
+	m := (l + r) >> 1
+	if R <= m {
+		return t.query(o<<1, l, m, L, R)
+	}
+	if m < L {
+		return t.query(o<<1|1, m+1, r, L, R)
+	}
+	return merge(t.query(o<<1, l, m, L, R), t.query(o<<1|1, m+1, r, L, R))
+}
+func main() {
+	in := bufio.NewReader(os.Stdin)
+	out := bufio.NewWriter(os.Stdout)
 	defer out.Flush()
 
-	var n, m int
-	var maxT int32
-	Fscan(in, &n, &m, &maxT)
-	es := make([][3]int32, m)
-	for i := range es {
-		Fscan(in, &es[i][0], &es[i][1], &es[i][2])
-	}
-	const mx = 5001
-	f := make([][mx]int32, n)
-	for i := range f {
-		for j := 1; j <= n; j++ {
-			f[i][j] = maxT + 1
+	var T, n, q, l, r int
+	for Fscan(in, &T); T > 0; T-- {
+		Fscan(in, &n)
+		a := make([]int, n)
+		for i := range a {
+			Fscan(in, &a[i])
 		}
-	}
-	f[0][1] = 0
-	from := make([][mx]int16, n+1)
-	ans := 0
-	for i := 1; i < n; i++ {
-		for _, e := range es {
-			v, w, t := e[0], e[1], e[2]
-			sumT := f[i-1][v] + t
-			if sumT < f[i][w] {
-				f[i][w] = sumT
-				from[i][w] = int16(v)
+		t := make(seg, n*4)
+		t.build(a, 1, 1, n)
+		for Fscan(in, &q); q > 0; q-- {
+			Fscan(in, &l, &r)
+			b := t.query(1, 1, n, l, r)
+			ans := 1 << 30
+			for i, v := range b {
+				for _, w := range b[:i] {
+					ans = min(ans, v|w)
+				}
 			}
-		}
-		if f[i][n] <= maxT {
-			ans = i
+			Fprintln(out, ans)
 		}
 	}
-
-	Fprintln(out, ans+1)
-	path := make([]any, ans+1)
-	v := int16(n)
-	for i := ans; i >= 0; i-- {
-		path[i] = v
-		v = from[i][v]
-	}
-	Fprint(out, path...)
 }
-func main() { Cf721C(os.Stdin, os.Stdout) }
+
 ```
 {% endcode %}
 
